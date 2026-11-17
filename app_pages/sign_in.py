@@ -30,12 +30,18 @@ with st.container(border=True, width=480):
 
     if submitted:
         try:
-            sign_in(email, password)
+            user = sign_in(email, password)
         except AuthError as error:
             st.error(str(error), icon=":material/error:")
         else:
-            # Back to where the user came from (set by the checkout gate later), otherwise the shop.
-            st.switch_page(st.session_state.pop("return_to", "app_pages/shop.py"))
+            # Staff and owner land on the Dashboard; customers go back to where they were
+            # (for example Checkout), otherwise the shop (US-AUTH-02 AC3, US-CART-04).
+            # streamlit_app.py does the switch on the next run, once the menu includes that page.
+            default = "app_pages/manage_dashboard.py" if user.is_staff_or_owner else "app_pages/shop.py"
+            st.session_state["redirect_to"] = st.session_state.pop("return_to", default)
+            st.rerun()
 
     st.page_link("app_pages/register.py", label="New here? Create an account", icon=":material/person_add:")
+    # US-AUTH-05: no reset email in the demo (it would need real email).
+    st.caption(":material/help: Forgot your password? Contact the store owner.")
     st.caption(":material/info: Demo store: use an @example.com email. No real orders, payments or emails.")

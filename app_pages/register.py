@@ -37,7 +37,9 @@ with st.container(border=True, width=480):
             except AuthError as error:
                 st.error(str(error), icon=":material/error:")
             else:
-                st.switch_page("app_pages/shop.py")
+                # Back to where they were (for example Checkout), otherwise the shop.
+                st.session_state["redirect_to"] = st.session_state.pop("return_to", "app_pages/shop.py")
+                st.rerun()
 
     st.page_link("app_pages/sign_in.py", label="Already have an account? Sign in", icon=":material/login:")
     st.caption(":material/info: Demo store: use an @example.com email and a made-up name.")

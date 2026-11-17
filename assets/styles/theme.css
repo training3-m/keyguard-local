@@ -1,0 +1,69 @@
+/*
+  KeyGuard Local: gaming / RGB effects (docs/requirements/02-ui-ux.md §2, UX-01, UX-02, UX-11, UX-14).
+  Base colors and fonts live in .streamlit/config.toml; this file only adds glow, gradient and focus.
+  Hooks use Streamlit's stable ".st-key-<key>" classes (set with key=...), never private class names.
+  Safety: nothing flashes; the gradient takes 12 s per cycle; all motion stops with reduced motion.
+*/
+
+:root {
+  --kg-cyan: #00E5FF;
+  --kg-violet: #B04CFF;
+  --kg-magenta: #FF3BD4;
+  --kg-green: #39FF88;
+  --kg-rgb: linear-gradient(90deg, #00E5FF, #B04CFF, #FF3BD4, #39FF88, #00E5FF);
+  --kg-glow-rest: 0 0 12px rgba(0, 229, 255, 0.25);
+  --kg-glow-hover: 0 0 24px rgba(0, 229, 255, 0.55);
+}
+
+/* Header: a thin RGB line that drifts slowly under the logo (gradient on edges only, UX-02). */
+.st-key-app_header::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 0.25rem;
+  background: var(--kg-rgb);
+  background-size: 300% 100%;
+  animation: kg-rgb-drift 12s linear infinite;
+}
+
+@keyframes kg-rgb-drift {
+  from { background-position: 0% 50%; }
+  to { background-position: 300% 50%; }
+}
+
+/* Product cards: soft cyan glow that grows on hover or keyboard focus (UX-14). */
+[class*="st-key-product_card_"] {
+  box-shadow: var(--kg-glow-rest);
+  transition: box-shadow 200ms ease-out, border-color 200ms ease-out;
+}
+[class*="st-key-product_card_"]:hover,
+[class*="st-key-product_card_"]:focus-within {
+  box-shadow: var(--kg-glow-hover);
+  border-color: var(--kg-cyan);
+}
+
+/* Security HUD: violet glow, because security is the hero (UX-04). */
+.st-key-security_hud {
+  box-shadow: 0 0 16px rgba(176, 76, 255, 0.35);
+  border-color: var(--kg-violet);
+}
+
+/* Order cards on My orders / Manage orders: a quieter glow. */
+[class*="st-key-order_"] {
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.15);
+}
+
+/* Visible keyboard focus everywhere (UX-11, WCAG 2.4.7). */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 2px solid var(--kg-cyan);
+  outline-offset: 2px;
+}
+
+/* Motion safety (NFR-UX-02): no animation or transitions for people who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .st-key-app_header::after { animation: none; background-position: 0% 50%; }
+  [class*="st-key-product_card_"] { transition: none; }
+}
