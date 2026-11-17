@@ -269,8 +269,9 @@ No user ever waits for another user to **start** a story. These three are the on
 |---|---|
 | Everything created in Phase 1: `streamlit_app.py`, `utils/`, `supabase/`, `.github/`, `.streamlit/`, `assets/`, `models/`, shared `components/`, `tests/conftest.py` | **Tech Lead** |
 | `app_pages/shop.py`, `components/filters.py`, `components/product_detail.py`, `components/account_profile.py`, `services/products.py`, `app_pages/manage_users.py`, `services/users.py` | **User 1** |
-| `app_pages/cart.py`, `app_pages/checkout.py`, `components/cart_summary.py`, `components/my_orders.py`, `services/orders.py`, `services/email_outbox.py`, `app_pages/manage_dashboard.py`, `services/dashboard.py`, `validation/checkout.py` | **User 2** |
+| `app_pages/cart.py`, `app_pages/checkout.py`, `components/cart_summary.py`, `components/my_orders.py`, `services/cart_lines.py`, `services/orders.py`, `services/email_outbox.py`, `app_pages/manage_dashboard.py`, `services/dashboard.py`, `validation/checkout.py` | **User 2** |
 | `app_pages/manage_products.py`, `app_pages/manage_orders.py`, `components/product_form.py`, `services/admin_products.py`, `services/admin_orders.py`, `services/storage.py`, `validation/products.py` | **User 3** |
+| Full list of every function, its file and owner | See [docs/architecture/service-contracts.md](../architecture/service-contracts.md) (written in Prompt E) |
 | `app_pages/account.py` | Tech Lead. It only places User 1's profile tab and User 2's orders tab side by side, so neither user edits it. |
 
 **Rules:**

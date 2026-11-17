@@ -1,4 +1,4 @@
-"""Register, sign in, sign out and "who is signed in?" (US-AUTH-01..03, NFR-AUTH, NFR-SES).
+"""Register, sign in, sign out and "who is signed in?" (US-AUTH-01, US-AUTH-02, US-AUTH-03, NFR-AUTH, NFR-SES).
 
 Rules this file follows:
 - Passwords go straight to Supabase, which stores them hashed. They are never logged or kept.
