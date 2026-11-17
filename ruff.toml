@@ -1,0 +1,11 @@
+# Settings for the ruff code checker (used by `ruff check .` and by CI).
+
+# Skip the downloaded agent skills in .claude/: they are third-party code, not ours.
+extend-exclude = [".claude"]
+
+# Matches the minimum Python version in the training playbook (3.11+).
+target-version = "py311"
+
+[lint]
+# Ruff's standard rules: real mistakes such as undefined names, unused imports and syntax errors.
+select = ["E4", "E7", "E9", "F"]
