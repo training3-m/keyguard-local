@@ -250,6 +250,6 @@ This is a classroom demo, so the targets are deliberately small. These limits ar
 | A1 | Users have a current desktop or phone browser and a stable internet connection. | Add a "minimum browser" note to the README. |
 | A2 | The instructor creates the first owner account and any staff accounts. | Add a documented one-time setup script. |
 | A3 | Everyone uses `@example.com` emails and made-up names and addresses. | Run `reset_demo.sql` and remind the class. |
-| A4 | **KeyGuard Local, Riverton and the Riverton Library fund are fictional.** The drive specs (AES-256, 10-try wipe and so on) are demo marketing copy, not verified product claims. | Label the specs "demo copy" on the product page. |
+| A4 | **KeyGuard Local, Rancho and the Rancho Library fund are fictional.** The drive specs (AES-256, 10-try wipe and so on) are demo marketing copy, not verified product claims. | Label the specs "demo copy" on the product page. |
 | A5 | Supabase and Streamlit free tiers remain available with similar limits. | Review §13 and the hosting choice. |
 | A6 | The class has 5 weeks for the build. | Drop the Could-have stories first (work division plan §5). |

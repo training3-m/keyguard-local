@@ -33,7 +33,7 @@ If this summary and a detail file disagree, the **detail file wins**.
 
 ## 2. Product in one paragraph
 
-KeyGuard Local sells **USB flash drives that lock with a physical PIN keypad**. The marketing copy (fictional) describes hardware AES-256 encryption, a self-wipe after 10 wrong PINs, and use on any computer with no software. Every drive sold sends a fixed amount to the fictional **Riverton Public Library Digital Safety Fund**. The catalog has 10 products across the Essentials, Pro, Riverton Community Edition, Bulk and Accessories lines, priced from $9 to $269. → *[01-product.md](01-product.md) Part A*
+KeyGuard Local sells **USB flash drives that lock with a physical PIN keypad**. The marketing copy (fictional) describes hardware AES-256 encryption, a self-wipe after 10 wrong PINs, and use on any computer with no software. Every drive sold sends a fixed amount to the fictional **Rancho Public Library Digital Safety Fund**. The catalog has 10 products across the Essentials, Pro, Rancho Community Edition, Bulk and Accessories lines, priced from $9 to $269. → *[01-product.md](01-product.md) Part A*
 
 ## 3. Users and roles
 
