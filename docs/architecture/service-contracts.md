@@ -24,6 +24,7 @@ Pages never call Supabase directly. Shared UI lives in `components/`.
 | `current_user() -> UserProfile \| None` | `services/auth.py` | NFR-SES | Lead | ✅ |
 | `change_password(current_password, new_password) -> None` | `services/auth.py` | US-AUTH-04 · U1-07 | User 1 | 🧩 |
 | `get_client() -> Client` | `services/supabase_client.py` | NFR-SES-02 | Lead | ✅ |
+| `community_total_cents() -> int \| None` | `services/community.py` | 02 §4.1, Q5 | Lead | ✅ |
 | `search_products(term, category, capacity_gb, price_range, in_stock_only, sort) -> list[Product]` | `services/products.py` | US-SRCH-01/02/03 · U1-01/02/06 | User 1 | 🧩 |
 | `get_product(sku) -> Product \| None` | `services/products.py` | US-PDP-01 · U1-03 | User 1 | 🧩 |
 | `related(sku, limit=3) -> list[Product]` | `services/products.py` | US-PDP-02 · U1-08 | User 1 | 🧩 |
@@ -92,4 +93,4 @@ Checked all 31 stories in `01-product.md` against the code. **Every story now ha
 | US-SRCH-04 | No service function needed: keep the filters in the URL with the widgets' `bind="query-params"` option. |
 | US-AUTH-05 | **Gap found and fixed:** the sign-in page now says "Forgot your password? Contact the store owner." |
 | US-CART-02 | **Gap found and fixed:** the cart needs current prices, so a new User 2 file `services/cart_lines.py` was added (instead of editing User 1's `services/products.py`). |
-| Community banner (02 §4.1, open question Q5) | **Open:** the banner shows a fixed message. A **live total** needs a small database function that guests may call (orders are private), plus a service function. Not part of any story: a small follow-up for the Tech Lead. |
+| Community banner (02 §4.1, open question Q5) | **Done (Tech Lead follow-up):** `public.community_total_cents()` (0009) returns only the total, so guests may call it; `services/community.py` caches it for 60 seconds; the header shows it, or a fixed message if unavailable. |
