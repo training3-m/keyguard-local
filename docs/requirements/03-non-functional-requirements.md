@@ -41,13 +41,15 @@
 
 ### 4.1 Data model
 
+The real definitions are the migration files in `supabase/migrations/` (0001–0006). This is a summary. IDs are `bigint generated always as identity` (simple counting numbers, as the Supabase/Postgres skill recommends for a single database); only `profiles.id` is a `uuid`, because it equals the Supabase sign-in account id.
+
 ```sql
 profiles (id uuid pk references auth.users on delete cascade,
           full_name text, role text not null default 'customer'
           check (role in ('customer','staff','owner')), created_at timestamptz default now())
           -- created by trigger on auth.users insert (role always 'customer')
 
-products (id uuid pk, sku text unique not null, name text not null,
+products (id bigint identity pk, sku text unique not null, name text not null,
           category text check (category in ('Essentials','Pro','Community','Bulk','Accessories')),
           capacity_gb int, color text, description text, specs jsonb default '{}',
           price_cents int not null check (price_cents > 0),
@@ -56,39 +58,47 @@ products (id uuid pk, sku text unique not null, name text not null,
           image_url text, is_active boolean default true, featured_rank int default 100,
           created_at timestamptz default now(), updated_at timestamptz default now())
 
-orders (id uuid pk, order_number text unique not null,
-        customer_id uuid not null references auth.users,
+orders (id bigint identity pk, order_number text unique not null,
+        customer_id uuid not null references profiles on delete restrict,
         customer_name text, customer_email text, address text, city text, zip text,
         subtotal_cents int, shipping_cents int, tax_cents int, total_cents int,
         community_gift_cents int,
         status text default 'Placed' check (status in ('Placed','Packed','Shipped','Cancelled')),
         idempotency_key uuid unique, email_file text, created_at timestamptz default now())
 
-order_items (id uuid pk, order_id uuid references orders on delete cascade,
-             product_id uuid references products, sku text, product_name text,
+order_items (id bigint identity pk, order_id bigint references orders on delete cascade,
+             product_id bigint references products on delete restrict, sku text, product_name text,
              unit_price_cents int, qty int check (qty between 1 and 10),
              community_gift_cents int, line_total_cents int)
 
-inventory_log (id, product_id, delta int, reason text, order_id uuid null, actor uuid, created_at)
+inventory_log (id, product_id, delta int, reason text, order_id bigint null, actor uuid, created_at)
 audit_log     (id, actor uuid, action text, target text, details jsonb, created_at)
 ```
+
+**Written by the database itself (triggers), never by the website:**
+- `inventory_log`: a trigger on `products` logs every stock change in the same transaction. `place_order` and `cancel_order` set the reason (`order` or `cancel`); other edits count as `staff_edit` or `owner_edit`.
+- `audit_log`: a trigger logs product create, delete and price/gift changes. `cancel_order` and `set_user_role` add their own entries (Prompt C).
+- Order status changes are checked by a trigger (NFR-INT-07). Moving to `Cancelled` is only allowed inside `cancel_order`, so stock is always restored.
 
 ### 4.2 Row Level Security (RLS is on for every table)
 
 | Table | Guest (anon) | Customer | Staff | Owner |
 |---|---|---|---|---|
-| products | SELECT active | SELECT active | SELECT all; UPDATE stock, description, specs, image, active (**not** price or gift; enforced by a trigger or a column-limited RPC) | ALL |
-| orders | — | SELECT own (`customer_id = auth.uid()`) | SELECT all; UPDATE status → Packed/Shipped | SELECT all; UPDATE status incl. Cancelled |
+| products | SELECT active | SELECT active | SELECT all; UPDATE stock, description, specs, image, active (**not** price or gift, and nobody changes a SKU; enforced by a trigger) | ALL |
+| orders | — | SELECT own (`customer_id = auth.uid()`) | SELECT all; UPDATE status → Packed/Shipped | SELECT all; UPDATE status; Cancelled only via `cancel_order` |
 | order_items | — | SELECT own (via order) | SELECT all | SELECT all |
 | profiles | — | SELECT/UPDATE own `full_name` only | SELECT all | SELECT all; role only via `set_user_role` |
-| inventory_log | — | — | SELECT, INSERT (own actor) | SELECT |
-| audit_log | — | — | — | SELECT |
+| inventory_log | — | — | SELECT (written by trigger) | SELECT (written by trigger) |
+| audit_log | — | — | — | SELECT (written by triggers and functions) |
+| Storage `product-images` | View by link | View by link | Upload, replace, delete | Upload, replace, delete |
+
+Implemented in `supabase/migrations/0005_row_level_security.sql` and `0006_storage_product_images.sql`. Table privileges start from nothing and are then granted per table; column grants limit customers to their own `full_name` and staff to an order's `status`.
 
 ### 4.3 Database functions
 
 | ID | Pri | Requirement |
 |---|---|---|
-| NFR-DB-01 | M | `place_order(items jsonb, shipping jsonb, idempotency_key uuid)` is `SECURITY DEFINER` with `SET search_path = public`. It takes the customer from `auth.uid()`, rejects anonymous callers, **recalculates every price and total on the server** (never trusting prices sent by the client), locks rows with `SELECT … FOR UPDATE` and runs as one transaction. |
+| NFR-DB-01 | M | `place_order(items jsonb, shipping jsonb, idempotency_key uuid)` is `SECURITY DEFINER` with `SET search_path = ''` (every table written with its schema, for example `public.products`, as the Supabase/Postgres skill recommends). It takes the customer from `auth.uid()`, rejects anonymous callers, **recalculates every price and total on the server** (never trusting prices sent by the client), locks rows with `SELECT … FOR UPDATE` and runs as one transaction. |
 | NFR-DB-02 | M | `cancel_order(order_id)` (owner only) restocks the items and logs the change. `set_user_role(...)` (owner only) logs to `audit_log`. |
 | NFR-DB-03 | M | Every `SECURITY DEFINER` function checks the caller's role inside the function and has `EXECUTE` revoked from `public` and granted only to `authenticated`. |
 | NFR-DB-04 | M | All money is stored as integer cents. Check constraints stop stock from going negative and prices from being zero or less. |
