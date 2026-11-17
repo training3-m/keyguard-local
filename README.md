@@ -11,7 +11,7 @@ A demo e-commerce web app built with **Streamlit** and **Supabase**, used to tea
 | `.streamlit/` | Streamlit config (`config.toml`) and local secrets. Copy `secrets.toml.example` to `secrets.toml`; the real file is never committed. |
 | `.env.example` | Template for `.env`, which scripts and tests use. Copy it and fill in the values; `.env` is never committed. |
 | `.claude/skills/` | Agent skills for Claude Code (Streamlit, Supabase/Postgres, UI/UX), recorded in `skills-lock.json` |
-| `pages/` | Streamlit multipage app pages (catalog, cart, checkout, orders, admin…) |
+| `app_pages/` | Streamlit multipage app pages (catalog, cart, checkout, orders, admin…) |
 | `components/` | Reusable UI pieces (product card, cart widget, nav, forms) |
 | `services/` | Supabase client and data access (products, cart, orders, auth) |
 | `models/` | Data models / schemas used by the app |

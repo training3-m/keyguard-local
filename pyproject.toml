@@ -1,0 +1,12 @@
+# Project settings for tools. Code-checker (ruff) settings are in ruff.toml.
+
+[project]
+name = "keyguard-local"
+version = "0.1.0"
+description = "Demo store for keypad-locked USB drives (training project)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+# Lets tests import the app's own folders (services, utils, validation, models...).
+pythonpath = ["."]
+testpaths = ["tests"]

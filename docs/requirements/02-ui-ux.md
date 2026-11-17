@@ -72,24 +72,24 @@ Set the base theme in `.streamlit/config.toml`: `base="dark"`, `primaryColor="#0
 
 ```
 Public (anyone)
-├── Home / Catalog            pages/shop.py
+├── Home / Catalog            app_pages/shop.py
 ├── Product Detail            (opened from Catalog; ?sku= query param)
-├── Cart                      pages/cart.py          (guest cart allowed)
-├── Sign in                   pages/sign_in.py       (all roles use this one page)
-└── Register                  pages/register.py      (creates a customer account)
+├── Cart                      app_pages/cart.py          (guest cart allowed)
+├── Sign in                   app_pages/sign_in.py       (all roles use this one page)
+└── Register                  app_pages/register.py      (creates a customer account)
 
 Customer (signed in)
-├── Checkout                  pages/checkout.py      (sign-in REQUIRED)
+├── Checkout                  app_pages/checkout.py      (sign-in REQUIRED)
 ├── Order Confirmation        (after checkout; ?order= query param)
-└── My Account                pages/account.py       (profile + My orders)
+└── My Account                app_pages/account.py       (profile + My orders)
 
 Staff + Owner (signed in, role staff/owner)
-├── Dashboard                 pages/manage_dashboard.py
-├── Manage Products           pages/manage_products.py
-└── Orders                    pages/manage_orders.py
+├── Dashboard                 app_pages/manage_dashboard.py
+├── Manage Products           app_pages/manage_products.py
+└── Orders                    app_pages/manage_orders.py
 
 Owner only
-└── Staff & Users             pages/manage_users.py
+└── Staff & Users             app_pages/manage_users.py
 ```
 
 The navigation is **built from the user's role** using `st.navigation`. A user never sees a menu link to a page they cannot open. Every page also checks the user's role itself, so typing the URL directly does not get around the menu (see 03-non-functional).

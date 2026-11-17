@@ -56,8 +56,8 @@ The Tech Lead builds these in order and pushes each one to GitHub through a PR. 
 | FND-07 | **Database functions:** `place_order`, `cancel_order`, `set_user_role` and log writes, with integration tests for overselling and RLS | `supabase/migrations/003_functions.sql`, `tests/integration/` | **US-CHK-03**, NFR-DB-01…03, NFR-LOG | L |
 | FND-08 | **Seed data:** 11 products, 3 demo accounts, **3 demo orders** (so order pages have data before checkout exists), `create_owner.sql`, `reset_demo.sql` | `supabase/seed/` | 01 §A5, NFR-PRIV-04 | M |
 | FND-09 | **Session and role guards:** a Supabase client for each user, tokens, idle timeout, `require_signed_in`, `require_role` | `utils/session.py`, `utils/guards.py` | **US-MGT-01**, NFR-SES, NFR-ROLE | M |
-| FND-10 | **Sign-in:** register, sign in, sign out, 5-try lockout, "forgot password" message, cart kept through sign-in | `pages/sign_in.py`, `pages/register.py`, `services/auth.py` | **US-AUTH-01, 02, 03, 05, US-CART-04**, NFR-AUTH | L |
-| FND-11 | **App shell:** role-based nav, a **stub for every page**, header, demo footer, community banner, `theme.css` v1 | `streamlit_app.py`, `pages/*.py`, `assets/styles/theme.css` | UX-01, 02, 05, 06, 12 | M |
+| FND-10 | **Sign-in:** register, sign in, sign out, 5-try lockout, "forgot password" message, cart kept through sign-in | `app_pages/sign_in.py`, `app_pages/register.py`, `services/auth.py` | **US-AUTH-01, 02, 03, 05, US-CART-04**, NFR-AUTH | L |
+| FND-11 | **App shell:** role-based nav, a **stub for every page**, header, demo footer, community banner, `theme.css` v1 | `streamlit_app.py`, `app_pages/*.py`, `assets/styles/theme.css` | UX-01, 02, 05, 06, 12 | M |
 | FND-12 | **Models and service stubs:** every model, plus every service function in Appendix A, returning **realistic fake data** | `models/`, `services/` | — | M |
 | FND-13 | **Shared parts:** `product_card`, `stock_badge`, `lock_indicator`, `security_hud`, `community_chip`, `order_detail`, `empty_state`; `utils/pricing.py` and `utils/cart.py` (add/update/remove in the session) with tests; `utils/formatting.py`; the `validation/` package | `components/`, `utils/`, `validation/` | UX-03, 04, 09 | L |
 
@@ -95,8 +95,8 @@ Each participant has **only one story open at a time**:
 | Story | Pri | Size | Files it touches | Depends on |
 |---|---|---|---|---|
 | **F3 Product search** | | | | |
-| US-SRCH-01 Keyword search | M | M | `pages/shop.py`, `services/products.py` | — |
-| US-SRCH-02 Filters | M | M | `pages/shop.py`, `components/filters.py`, `services/products.py` | SRCH-01 |
+| US-SRCH-01 Keyword search | M | M | `app_pages/shop.py`, `services/products.py` | — |
+| US-SRCH-02 Filters | M | M | `app_pages/shop.py`, `components/filters.py`, `services/products.py` | SRCH-01 |
 | US-SRCH-03 Sort | S | S | `components/filters.py`, `services/products.py` | SRCH-02 |
 | US-SRCH-04 Filters in URL | C | S | `components/filters.py` | SRCH-02 |
 | **F4 Product detail** | | | | |
@@ -104,26 +104,26 @@ Each participant has **only one story open at a time**:
 | US-PDP-02 "You may also like" | C | S | `components/product_detail.py`, `services/products.py` | PDP-01 |
 | **F1 Cart** | | | | |
 | US-CART-01 Add to cart button | M | S | `components/product_detail.py` (uses `utils/cart.py`) | PDP-01 |
-| US-CART-02 Cart page | M | M | `pages/cart.py`, `components/cart_summary.py` | — |
+| US-CART-02 Cart page | M | M | `app_pages/cart.py`, `components/cart_summary.py` | — |
 | US-CART-03 Free-shipping hint | S | S | `components/cart_summary.py` | CART-02 |
 | **F2 Checkout** | | | | |
-| US-CHK-01 Sign-in gate | M | S | `pages/checkout.py` | — |
-| US-CHK-02 Checkout form | M | M | `pages/checkout.py`, `services/orders.py`, `validation/checkout.py` | CHK-01 |
-| US-CHK-05 Confirmation page | M | S | `pages/checkout.py` | CHK-02 |
+| US-CHK-01 Sign-in gate | M | S | `app_pages/checkout.py` | — |
+| US-CHK-02 Checkout form | M | M | `app_pages/checkout.py`, `services/orders.py`, `validation/checkout.py` | CHK-01 |
+| US-CHK-05 Confirmation page | M | S | `app_pages/checkout.py` | CHK-02 |
 | US-CHK-04 `.eml` file in `outbox/` | M | M | `services/email_outbox.py`, `services/orders.py` | CHK-02 |
 | US-CHK-06 My orders | S | M | `components/my_orders.py`, `services/orders.py` | — (uses seed orders) |
 | **F5 Account** | | | | |
 | US-AUTH-04 Edit name, change password | S | M | `components/account_profile.py`, `services/auth.py` (fills in the `change_password` stub) | — |
 | **F6 Manage** | | | | |
-| US-MGT-02 Product list | M | M | `pages/manage_products.py`, `services/admin_products.py` | — |
-| US-MGT-05 Deactivate / reactivate | M | S | `pages/manage_products.py`, `services/admin_products.py` | MGT-02 |
+| US-MGT-02 Product list | M | M | `app_pages/manage_products.py`, `services/admin_products.py` | — |
+| US-MGT-05 Deactivate / reactivate | M | S | `app_pages/manage_products.py`, `services/admin_products.py` | MGT-02 |
 | US-MGT-03 Create product | M | M | `components/product_form.py`, `services/admin_products.py`, `validation/products.py` | MGT-02 |
-| US-MGT-04 Bulk edit (staff vs owner) | M | L | `pages/manage_products.py`, `services/admin_products.py` | MGT-02 |
+| US-MGT-04 Bulk edit (staff vs owner) | M | L | `app_pages/manage_products.py`, `services/admin_products.py` | MGT-02 |
 | US-MGT-07 Image upload | S | M | `components/product_form.py`, `services/storage.py` | MGT-03 |
-| US-MGT-06 Delete never-ordered product | S | S | `pages/manage_products.py`, `services/admin_products.py` | MGT-02 |
-| US-MGT-08 Dashboard | M | M | `pages/manage_dashboard.py`, `services/dashboard.py` | — |
-| US-MGT-09 Manage orders + cancel | S | L | `pages/manage_orders.py`, `services/admin_orders.py` | — (uses seed orders) |
-| US-MGT-10 Promote / demote staff | M | M | `pages/manage_users.py`, `services/users.py` | — |
+| US-MGT-06 Delete never-ordered product | S | S | `app_pages/manage_products.py`, `services/admin_products.py` | MGT-02 |
+| US-MGT-08 Dashboard | M | M | `app_pages/manage_dashboard.py`, `services/dashboard.py` | — |
+| US-MGT-09 Manage orders + cancel | S | L | `app_pages/manage_orders.py`, `services/admin_orders.py` | — (uses seed orders) |
+| US-MGT-10 Promote / demote staff | M | M | `app_pages/manage_users.py`, `services/users.py` | — |
 
 This catalog is the reference. **Who builds what, and in which order, is in §5.**
 
@@ -141,11 +141,11 @@ This catalog is the reference. **Who builds what, and in which order, is in §5.
 
 | Pick | Story | Pri | Size | Depends on | Files |
 |---|---|---|---|---|---|
-| **U1-01** | US-SRCH-01 Keyword search | M | M | — | `pages/shop.py`, `services/products.py` |
-| **U1-02** | US-SRCH-02 Filters | M | M | U1-01 | `components/filters.py`, `pages/shop.py`, `services/products.py` |
+| **U1-01** | US-SRCH-01 Keyword search | M | M | — | `app_pages/shop.py`, `services/products.py` |
+| **U1-02** | US-SRCH-02 Filters | M | M | U1-01 | `components/filters.py`, `app_pages/shop.py`, `services/products.py` |
 | **U1-03** | US-PDP-01 Detail page + Security HUD | M | L | — | `components/product_detail.py`, `services/products.py` |
 | **U1-04** | US-CART-01 Add to cart button | M | S | U1-03 | `components/product_detail.py` |
-| **U1-05** | US-MGT-10 Promote / demote staff | M | M | — | `pages/manage_users.py`, `services/users.py` |
+| **U1-05** | US-MGT-10 Promote / demote staff | M | M | — | `app_pages/manage_users.py`, `services/users.py` |
 | **U1-06** | US-SRCH-03 Sort | S | S | U1-02 | `components/filters.py`, `services/products.py` |
 | **U1-07** | US-AUTH-04 Edit name, change password | S | M | — | `components/account_profile.py`, `services/auth.py` (stub body only) |
 | **U1-08** | US-PDP-02 "You may also like" | C | S | U1-03 | `components/product_detail.py`, `services/products.py` |
@@ -157,12 +157,12 @@ This catalog is the reference. **Who builds what, and in which order, is in §5.
 
 | Pick | Story | Pri | Size | Depends on | Files |
 |---|---|---|---|---|---|
-| **U2-01** | US-CART-02 Cart page | M | M | — | `pages/cart.py`, `components/cart_summary.py` |
-| **U2-02** | US-CHK-01 Sign-in gate | M | S | — | `pages/checkout.py` |
-| **U2-03** | US-CHK-02 Checkout form (no card) | M | M | U2-02 | `pages/checkout.py`, `services/orders.py`, `validation/checkout.py` |
-| **U2-04** | US-CHK-05 Confirmation page | M | S | U2-03 | `pages/checkout.py` |
+| **U2-01** | US-CART-02 Cart page | M | M | — | `app_pages/cart.py`, `components/cart_summary.py` |
+| **U2-02** | US-CHK-01 Sign-in gate | M | S | — | `app_pages/checkout.py` |
+| **U2-03** | US-CHK-02 Checkout form (no card) | M | M | U2-02 | `app_pages/checkout.py`, `services/orders.py`, `validation/checkout.py` |
+| **U2-04** | US-CHK-05 Confirmation page | M | S | U2-03 | `app_pages/checkout.py` |
 | **U2-05** | US-CHK-04 `.eml` file in `outbox/` | M | M | U2-03 | `services/email_outbox.py`, `services/orders.py` |
-| **U2-06** | US-MGT-08 Dashboard | M | M | — | `pages/manage_dashboard.py`, `services/dashboard.py` |
+| **U2-06** | US-MGT-08 Dashboard | M | M | — | `app_pages/manage_dashboard.py`, `services/dashboard.py` |
 | **U2-07** | US-CART-03 Free-shipping hint | S | S | U2-01 | `components/cart_summary.py` |
 | **U2-08** | US-CHK-06 My orders | S | M | — | `components/my_orders.py`, `services/orders.py` |
 
@@ -172,13 +172,13 @@ This catalog is the reference. **Who builds what, and in which order, is in §5.
 
 | Pick | Story | Pri | Size | Depends on | Files |
 |---|---|---|---|---|---|
-| **U3-01** | US-MGT-02 Product list | M | M | — | `pages/manage_products.py`, `services/admin_products.py` |
-| **U3-02** | US-MGT-05 Deactivate / reactivate | M | S | U3-01 | `pages/manage_products.py`, `services/admin_products.py` |
+| **U3-01** | US-MGT-02 Product list | M | M | — | `app_pages/manage_products.py`, `services/admin_products.py` |
+| **U3-02** | US-MGT-05 Deactivate / reactivate | M | S | U3-01 | `app_pages/manage_products.py`, `services/admin_products.py` |
 | **U3-03** | US-MGT-03 Create product | M | M | U3-01 | `components/product_form.py`, `services/admin_products.py`, `validation/products.py` |
-| **U3-04** | US-MGT-04 Bulk edit (staff vs owner fields) | M | L | U3-01 | `pages/manage_products.py`, `services/admin_products.py` |
+| **U3-04** | US-MGT-04 Bulk edit (staff vs owner fields) | M | L | U3-01 | `app_pages/manage_products.py`, `services/admin_products.py` |
 | **U3-05** | US-MGT-07 Image upload | S | M | U3-03 | `components/product_form.py`, `services/storage.py` |
-| **U3-06** | US-MGT-06 Delete never-ordered product | S | S | U3-01 | `pages/manage_products.py`, `services/admin_products.py` |
-| **U3-07** | US-MGT-09 Manage orders + cancel | S | L | — | `pages/manage_orders.py`, `services/admin_orders.py` |
+| **U3-06** | US-MGT-06 Delete never-ordered product | S | S | U3-01 | `app_pages/manage_products.py`, `services/admin_products.py` |
+| **U3-07** | US-MGT-09 Manage orders + cancel | S | L | — | `app_pages/manage_orders.py`, `services/admin_orders.py` |
 
 **Total: 14 points.**
 
@@ -268,10 +268,10 @@ No user ever waits for another user to **start** a story. These three are the on
 | Files | Owner |
 |---|---|
 | Everything created in Phase 1: `streamlit_app.py`, `utils/`, `supabase/`, `.github/`, `.streamlit/`, `assets/`, `models/`, shared `components/`, `tests/conftest.py` | **Tech Lead** |
-| `pages/shop.py`, `components/filters.py`, `components/product_detail.py`, `components/account_profile.py`, `services/products.py`, `pages/manage_users.py`, `services/users.py` | **User 1** |
-| `pages/cart.py`, `pages/checkout.py`, `components/cart_summary.py`, `components/my_orders.py`, `services/orders.py`, `services/email_outbox.py`, `pages/manage_dashboard.py`, `services/dashboard.py`, `validation/checkout.py` | **User 2** |
-| `pages/manage_products.py`, `pages/manage_orders.py`, `components/product_form.py`, `services/admin_products.py`, `services/admin_orders.py`, `services/storage.py`, `validation/products.py` | **User 3** |
-| `pages/account.py` | Tech Lead. It only places User 1's profile tab and User 2's orders tab side by side, so neither user edits it. |
+| `app_pages/shop.py`, `components/filters.py`, `components/product_detail.py`, `components/account_profile.py`, `services/products.py`, `app_pages/manage_users.py`, `services/users.py` | **User 1** |
+| `app_pages/cart.py`, `app_pages/checkout.py`, `components/cart_summary.py`, `components/my_orders.py`, `services/orders.py`, `services/email_outbox.py`, `app_pages/manage_dashboard.py`, `services/dashboard.py`, `validation/checkout.py` | **User 2** |
+| `app_pages/manage_products.py`, `app_pages/manage_orders.py`, `components/product_form.py`, `services/admin_products.py`, `services/admin_orders.py`, `services/storage.py`, `validation/products.py` | **User 3** |
+| `app_pages/account.py` | Tech Lead. It only places User 1's profile tab and User 2's orders tab side by side, so neither user edits it. |
 
 **Rules:**
 1. **Only the Tech Lead changes the database.** Need a column? Open an issue labeled `schema-change`. It gets a new numbered migration file, and merged migration files are never edited.
