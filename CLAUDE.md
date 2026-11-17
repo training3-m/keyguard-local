@@ -10,13 +10,15 @@ KeyGuard Local: a demo store for a high school class that sells fictional keypad
 
 ## Our file names vs. the training playbooks
 The playbooks in `docs/training/` were written for a different example store. In this repo:
-- `app/pages` → `pages/`, `app/services` → `services/`, `app/components` → `components/`, `app/streamlit_app.py` → `streamlit_app.py`
+- `app/pages` → `app_pages/`, `app/services` → `services/`, `app/components` → `components/`, `app/streamlit_app.py` → `streamlit_app.py`
 - `01-product-features-user-stories.md` → `01-product.md`, `02-ui-ux-requirements.md` → `02-ui-ux.md`
 - "doc 02 section 3" (colors) → `02-ui-ux.md` section 2.1
 - Story IDs look like `US-CART-01`, not `US-101`. Features are F1–F6, not E1–E7.
+- Pages live in `app_pages/` (not `pages/`): the Streamlit skill warns that `pages/` clashes with Streamlit's old auto-discovery. Every page is registered in `streamlit_app.py` with `st.navigation`.
+- "app/config" → `utils/config.py`; the Supabase client → `services/supabase_client.py` (one per browser session, never `st.cache_resource`); `require_signed_in` / `require_role` → `utils/guards.py`; form checks → `validation/`.
 
 ## Layers (explain these to the student when asked)
-page (`pages/`) -> service (`services/`) -> Supabase table + security rule (`supabase/migrations`)
+page (`app_pages/`) -> service (`services/`) -> Supabase table + security rule (`supabase/migrations`)
 Pages never call Supabase directly. Reusable UI is in `components/`. Business rules live in services or database functions.
 
 ## Rules

@@ -1,0 +1,19 @@
+# Streamlit settings for KeyGuard Local. Committed to git (no secrets here).
+# Colors are the dark-first tokens from docs/requirements/02-ui-ux.md section 2.1.
+# Extra glow / gradient / bevel effects come later in assets/styles/theme.css (foundation Prompt E).
+
+[theme]
+base = "dark"
+primaryColor = "#00E5FF"              # Neon Cyan: buttons, links, focus
+backgroundColor = "#07080C"           # Void Black: page
+secondaryBackgroundColor = "#10131B"  # Surface: sidebar, inputs, cards
+textColor = "#E8ECF4"
+borderColor = "#232838"
+linkColor = "#00E5FF"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Orbitron:https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap"
+
+[client]
+# Users see a short, friendly error; full details only print in the terminal (NFR-SEC-08).
+showErrorDetails = "none"

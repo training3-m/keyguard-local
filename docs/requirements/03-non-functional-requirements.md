@@ -168,7 +168,7 @@ Training groups may include minors, so these rules protect learners as well as d
 
 | ID | Pri | Requirement |
 |---|---|---|
-| NFR-MNT-01 | M | Layering: `pages/` hold UI only, `components/` hold reusable widgets, and `services/` handle Supabase access (`auth.py`, `products.py`, `orders.py`, `users.py`, `email_outbox.py` and others). `utils/` holds pure helpers (`pricing.py`, `cart.py`, `session.py`, `guards.py` with `require_role(...)`), and `validation/` holds input checks per area. The full file list is in the work division plan. |
+| NFR-MNT-01 | M | Layering: `app_pages/` hold UI only, `components/` hold reusable widgets, and `services/` handle Supabase access (`auth.py`, `products.py`, `orders.py`, `users.py`, `email_outbox.py` and others). `utils/` holds pure helpers (`pricing.py`, `cart.py`, `session.py`, `guards.py` with `require_role(...)`), and `validation/` holds input checks per area. The full file list is in the work division plan. |
 | NFR-MNT-03 | M | **Code quality:** code is formatted and linted with `ruff`, public functions have type hints and a one-line docstring, there are no unused imports, and nothing is debugged with `print`. CI enforces the formatting and linting. |
 | NFR-MNT-02 | M | The database schema, RLS, functions and seed data live as numbered SQL files in `supabase/migrations/` and `supabase/seed/`. |
 | NFR-TST-01 | M | pytest unit tests cover pricing (shipping threshold, tax rounding), cart operations, validation, filename cleaning and `.eml` generation. |
