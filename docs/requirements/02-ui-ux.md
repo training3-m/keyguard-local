@@ -63,7 +63,7 @@ Set the base theme in `.streamlit/config.toml`: `base="dark"`, `primaryColor="#0
 | **Primary button** | A neon-cyan fill with black text and bevelled corners. The glow grows on hover, and the focus state shows a 2px gradient ring. |
 | **Secondary button** | Transparent, with a 1px cyan border and cyan text. |
 | **Stock badge** | `In stock` (green), `Only N left` (amber, N ≤ 5), `Out of stock` (red). Shows text and color together. |
-| **Community chip** | `:material/volunteer_activism: $3.00 to Riverton Library` |
+| **Community chip** | `:material/volunteer_activism: $3.00 to Rancho Library` |
 | **Cart badge** | Item count shown next to "Cart" in the sidebar navigation |
 | **Toast** | Short confirmation such as "Added KeyGuard Pro 64 GB to cart" |
 | **Empty state** | Icon, one sentence and a single action (for example "Your cart is empty. → Browse drives") |
@@ -101,7 +101,7 @@ The navigation is **built from the user's role** using `st.navigation`. A user n
 ```
 ┌──────────────┬──────────────────────────────────────────────────────┐
 │ SIDEBAR      │  HEADER: logo · "Lock it. Carry it. Give back."      │
-│ [logo]       │  Community banner: "$1,240 raised for Riverton       │
+│ [logo]       │  Community banner: "$1,240 raised for Rancho         │
 │ Shop         │  Library Digital Safety Fund" (live total)           │
 │ Cart (3)     ├──────────────────────────────────────────────────────┤
 │ Checkout     │                                                      │
@@ -127,7 +127,7 @@ A **demo notice** appears in the footer and on the checkout page so that nobody 
 │  [ drive render with glowing keypad ]   LOCKED. PORTABLE.        │
 │   ● LOCKED  →  ● UNLOCKED  (slow loop)  Hardware-locked USB      │
 │                                         drives. Every one helps  │
-│                                         Riverton.                │
+│                                         Rancho.                  │
 │                                 [SHOP PRO DRIVES] [COMMUNITY ED.]│
 ├──────────────────────────────────────────────────────────────────┤
 │ SECURITY HUD:  🔢 PIN keypad  |  🛡 AES-256  |  ⌫ 10-try wipe    │
@@ -138,7 +138,7 @@ A **demo notice** appears in the footer and on the checkout page so that nobody 
 │ Sort: [Featured ▾]   ☐ In stock only            12 results       │
 ├─────────────────┬─────────────────┬──────────────────────────────┤
 │ [ image ]       │ [ image ]       │ [ image ]                    │
-│ Pro 64 GB       │ Essentials 32GB │ Riverton Community 32 GB     │
+│ Pro 64 GB       │ Essentials 32GB │ Rancho Community 32 GB       │
 │ Midnight Black  │ Slate Grey      │ River Blue                   │
 │ $79.00          │ $59.00          │ $65.00                       │
 │ ● In stock      │ ● Only 3 left   │ ● In stock                   │
@@ -159,7 +159,7 @@ A **demo notice** appears in the footer and on the checkout page so that nobody 
 │         [ large image ]       │ SKU KG-PRO-64 · Pro              │
 │                               │ $79.00                           │
 │                               │ ● In stock (25)                  │
-│                               │ ♥ $3.00 goes to Riverton Library │
+│                               │ ♥ $3.00 goes to Rancho Library   │
 │                               │ Qty [ 1 ▾ ]   [Add to cart]      │
 │                               │ ← Back to shop                   │
 ├───────────────────────────────┴──────────────────────────────────┤
@@ -194,7 +194,7 @@ A **demo notice** appears in the footer and on the checkout page so that nobody 
 │                                      Shipping           FREE     │
 │                                      Tax (8%)           $13.36   │
 │                                      Total             $180.36   │
-│                                      ♥ To Riverton       $6.50   │
+│                                      ♥ To Rancho         $6.50   │
 │ [Continue shopping]                         [Proceed to checkout]│
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -213,7 +213,7 @@ A **demo notice** appears in the footer and on the checkout page so that nobody 
 │ Full name   [Sam Lee (prefilled)] │  Shipping              FREE   │
 │ Address     [               ]     │  Tax                 $13.36   │
 │ City [      ] ZIP [     ]         │  Total              $180.36   │
-│ ☐ I understand this is a demo     │  ♥ To Riverton        $6.50   │
+│ ☐ I understand this is a demo     │  ♥ To Rancho          $6.50   │
 │           [ Place order ]         │                               │
 └──────────────────────────────────┴───────────────────────────────┘
 ```
@@ -228,7 +228,7 @@ A **demo notice** appears in the footer and on the checkout page so that nobody 
 ```
 ✅ Thank you, Alex! Your order KG-20261102-0007 is confirmed.
 A confirmation email was saved for alex@example.com (demo outbox).
-Items · totals · "You gave $6.50 to Riverton Library" · [Back to shop]
+Items · totals · "You gave $6.50 to Rancho Library" · [Back to shop]
 ```
 
 ### 4.7 Sign in and Register
@@ -353,7 +353,7 @@ Search users [          ]
 |---|---|---|
 | "Gaming RGB / premium gaming-hardware aesthetic" | Dark-first theme, neon accents, RGB gradient edges, bevelled shapes and display fonts (§2) | **Not gamification:** no points, XP, levels, badges or rewards for shoppers. "Gaming" is the *look* only. Not strobing or flashing lights. Not copying any real gaming brand's logo, colors or name. |
 | "Highlights my USB drives' security" | Security strip on every card, Security HUD, lock-state LED motif, and the keypad explainer placed above the fold (§2.3, §4.2, §4.3) | Not fear-based marketing, "hacker" imagery or skulls. Not claims of being unhackable or certified. |
-| "Somewhat beneficial to a local city" | Community banner on every page, a gift chip on every card, and the gift total in the cart, confirmation and email | Not a real city partnership or real donation (Riverton is fictional). Not guilt-tripping shoppers. |
+| "Somewhat beneficial to a local city" | Community banner on every page, a gift chip on every card, and the gift total in the cart, confirmation and email | Not a real city partnership or real donation (Rancho is fictional). Not guilt-tripping shoppers. |
 | "Customers register and sign in" | A shared "Access Terminal" sign-in and register page, a checkout gate, and My Account (§4.5, §4.7, §4.8) | Not social login. Not asking for age, phone or photos. Browsing never requires an account. |
 | "Owner and staff manage products" | Manage section built from the user's role, with controls hidden by role (§3, §4.9–§4.12) | Not a separate admin website. Not exposing owner controls to staff. |
 | "Learning and demo" | A demo notice on every page and at checkout. No payment fields anywhere. | Not a low-quality mock-up. It should look like a real, polished store while always being labeled as a demo. |

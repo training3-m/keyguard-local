@@ -1,7 +1,7 @@
 # 01 — Product Features and User Stories: KeyGuard Local
 
 > Part of the KeyGuard Local requirement set. See [00-consolidated-requirements.md](00-consolidated-requirements.md).
-> Purpose: learning and demo. The company, the city ("Riverton") and the products are fictional.
+> Purpose: learning and demo. The company, the city ("Rancho") and the products are fictional.
 > Priority: **M** = Mandatory, **S** = Should, **C** = Could.
 
 ---
@@ -12,7 +12,7 @@
 
 **KeyGuard Local** is a small online store that sells **hardware-secured USB flash drives**. Each drive has a **physical PIN keypad** on the casing. Until the right PIN is typed on the stick, the drive does not show up on a computer. Encryption runs inside the drive, so it works on any computer and needs no software.
 
-A fixed amount from every drive sold goes to the **Riverton Public Library Digital Safety Fund**, which runs free classes on password safety and data privacy in Riverton (a fictional city).
+A fixed amount from every drive sold goes to the **Rancho Public Library Digital Safety Fund**, which runs free classes on password safety and data privacy in Rancho (a fictional city).
 
 **Tagline:** *Lock it. Carry it. Give back locally.*
 
@@ -50,9 +50,9 @@ A fixed amount from every drive sold goes to the **Riverton Public Library Digit
 | KG-ESS-32 | KeyGuard Essentials 32 GB | Essentials | 32 GB | Slate Grey | $59.00 | $2.00 | 35 |
 | KG-PRO-64 | KeyGuard Pro 64 GB | Pro | 64 GB | Midnight Black | $79.00 | $3.00 | 25 |
 | KG-PRO-128 | KeyGuard Pro 128 GB | Pro | 128 GB | Midnight Black | $99.00 | $4.00 | 20 |
-| KG-PRO-256 | KeyGuard Pro 256 GB | Pro | 256 GB | Midnight Black | $139.00 | $5.00 | 10 |
-| KG-RCE-32 | Riverton Community Edition 32 GB | Community | 32 GB | River Blue (skyline engraving) | $65.00 | $10.00 | 30 |
-| KG-RCE-64 | Riverton Community Edition 64 GB | Community | 64 GB | River Blue (skyline engraving) | $85.00 | $12.00 | 15 |
+| KG-PRO-256 | KeyGuard Pro 256 GB RGB Edition | Pro | 256 GB | Midnight Black with RGB keypad glow | $139.00 | $5.00 | 10 |
+| KG-RCE-32 | Rancho Community Edition 32 GB | Community | 32 GB | River Blue (skyline engraving) | $65.00 | $10.00 | 30 |
+| KG-RCE-64 | Rancho Community Edition 64 GB | Community | 64 GB | River Blue (skyline engraving) | $85.00 | $12.00 | 15 |
 | KG-BULK-5 | Essentials 32 GB — 5-Pack | Bulk | 5 × 32 GB | Slate Grey | $269.00 | $12.00 | 8 |
 | KG-ACC-LAN | KeyGuard Lanyard & Cap Set | Accessories | — | Mixed | $9.00 | $0.50 | 60 |
 | KG-ACC-CASE | Hard-Shell Travel Case | Accessories | — | Black | $15.00 | $0.50 | 45 |
@@ -90,7 +90,7 @@ Real payments, real email delivery, real shipping or tax, social login, multiple
 | **Cart** | The shopper's chosen products and quantities, kept in the browser session until checkout |
 | **Order** | A confirmed demo purchase with a number like `KG-20261102-0007`. No money changes hands. |
 | **Order status** | Placed → Packed → Shipped, or Cancelled |
-| **Community gift** | The fixed amount per unit sent to the fictional Riverton Library Digital Safety Fund |
+| **Community gift** | The fixed amount per unit sent to the fictional Rancho Library Digital Safety Fund |
 | **Outbox** | The folder where `.eml` confirmation emails are saved instead of being sent |
 | **Guest / Customer / Staff / Owner** | The four roles (Part B role matrix) |
 | **Security HUD** | The game-style panel showing a drive's security features as stat bars |

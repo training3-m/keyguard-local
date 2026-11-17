@@ -1,6 +1,6 @@
 # KeyGuard Local: rules for Claude Code
 
-KeyGuard Local: a demo store for a high school class that sells fictional keypad-locked USB drives with a dark gaming/RGB look that puts security first; part of each sale goes to a fictional Riverton library fund. Streamlit + Supabase. No real payments or emails.
+KeyGuard Local: a demo store for a high school class that sells fictional keypad-locked USB drives with a dark gaming/RGB look that puts security first; part of each sale goes to a fictional Rancho library fund. Streamlit + Supabase. No real payments or emails.
 
 ## Read first
 - Stories and plan: `docs/planning/work-division-plan.md` (pick codes U1-01…, foundation FND-01…13), `docs/requirements/01-product.md`
