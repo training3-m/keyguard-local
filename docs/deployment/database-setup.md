@@ -20,6 +20,20 @@ Run the files **one at a time, in number order**. Each one depends on the ones b
 | 4 | `supabase/migrations/0004_logs.sql` | `inventory_log` and `audit_log` tables, automatic logging triggers |
 | 5 | `supabase/migrations/0005_row_level_security.sql` | Who can see and change what (security rules) |
 | 6 | `supabase/migrations/0006_storage_product_images.sql` | `product-images` storage bucket and its rules |
+| 7 | `supabase/migrations/0007_place_order.sql` | `place_order`: the all-or-nothing checkout (US-CHK-03) |
+| 8 | `supabase/migrations/0008_order_and_role_functions.sql` | `cancel_order`, `set_user_role`, `set_order_email_file` |
+
+### Then the sample data and the test
+
+| Order | File | What it does |
+|---|---|---|
+| 9 | `supabase/seed/01_products.sql` | Adds the 11 products (10 for sale, 1 hidden) |
+| — | *(dashboard)* | Create the 3 demo accounts: see [demo-accounts.md](demo-accounts.md) |
+| 10 | `supabase/seed/02_demo_roles.sql` | Gives the demo accounts their names and roles |
+| 11 | `supabase/seed/03_sample_orders.sql` | Adds 3 past orders for the demo customer |
+| 12 | `supabase/tests/place_order_test.sql` | Proves checkout can't oversell or run twice. Expect **ALL PLACE_ORDER TESTS PASSED**. |
+
+**Tip:** if copy-pasting long files is awkward, files can be combined and run **once** in a new, empty query. The SQL Editor runs the whole text as one transaction, so it's all-or-nothing.
 
 For **each** file:
 

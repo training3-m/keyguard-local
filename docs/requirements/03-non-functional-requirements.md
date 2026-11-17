@@ -99,7 +99,7 @@ Implemented in `supabase/migrations/0005_row_level_security.sql` and `0006_stora
 | ID | Pri | Requirement |
 |---|---|---|
 | NFR-DB-01 | M | `place_order(items jsonb, shipping jsonb, idempotency_key uuid)` is `SECURITY DEFINER` with `SET search_path = ''` (every table written with its schema, for example `public.products`, as the Supabase/Postgres skill recommends). It takes the customer from `auth.uid()`, rejects anonymous callers, **recalculates every price and total on the server** (never trusting prices sent by the client), locks rows with `SELECT … FOR UPDATE` and runs as one transaction. |
-| NFR-DB-02 | M | `cancel_order(order_id)` (owner only) restocks the items and logs the change. `set_user_role(...)` (owner only) logs to `audit_log`. |
+| NFR-DB-02 | M | `cancel_order(order_number)` (owner only) restocks the items and logs the change. `set_user_role(user_id, role)` (owner only, `customer` or `staff` only, never on yourself) logs to `audit_log`. `set_order_email_file(order_number, path)` lets the checkout save the `.eml` path, which customers can't update directly. Implemented in `0007_place_order.sql` and `0008_order_and_role_functions.sql`. |
 | NFR-DB-03 | M | Every `SECURITY DEFINER` function checks the caller's role inside the function and has `EXECUTE` revoked from `public` and granted only to `authenticated`. |
 | NFR-DB-04 | M | All money is stored as integer cents. Check constraints stop stock from going negative and prices from being zero or less. |
 
