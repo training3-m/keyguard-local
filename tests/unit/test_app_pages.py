@@ -10,6 +10,9 @@ from tests.conftest import APP_FILE
 
 
 def _open(page: str | None = None) -> AppTest:
+    from services.community import community_total_cents
+
+    community_total_cents.clear()  # the banner total is cached; start fresh for each test
     at = AppTest.from_file(str(APP_FILE), default_timeout=30).run()
     if page:
         at.switch_page(page).run()
@@ -21,27 +24,27 @@ def _all_text(at: AppTest) -> str:
     return " ".join(str(p) for p in parts)
 
 
-def test_shop_opens_for_a_guest(fake_settings, as_user):
+def test_shop_opens_for_a_guest(fake_settings, fake_client, as_user):
     as_user(None)
     at = _open()
     assert not at.exception
     assert at.title[0].value == "Shop"
 
 
-def test_checkout_asks_a_guest_to_sign_in(fake_settings, as_user):
+def test_checkout_asks_a_guest_to_sign_in(fake_settings, fake_client, as_user):
     as_user(None)
     at = _open("app_pages/checkout.py")
     assert not at.exception
     assert "Sign in to check out" in _all_text(at)  # US-CHK-01 gate
 
 
-def test_checkout_remembers_where_to_return(fake_settings, as_user):
+def test_checkout_remembers_where_to_return(fake_settings, fake_client, as_user):
     as_user(None)
     at = _open("app_pages/checkout.py")
     assert at.session_state["return_to"] == "app_pages/checkout.py"  # US-CART-04
 
 
-def test_staff_can_open_the_dashboard(fake_settings, as_user):
+def test_staff_can_open_the_dashboard(fake_settings, fake_client, as_user):
     as_user("staff")
     at = _open("app_pages/manage_dashboard.py")
     assert not at.exception
@@ -50,13 +53,13 @@ def test_staff_can_open_the_dashboard(fake_settings, as_user):
     assert "revenue" not in text  # revenue tiles are owner only (US-MGT-08 AC2)
 
 
-def test_owner_sees_owner_only_extras(fake_settings, as_user):
+def test_owner_sees_owner_only_extras(fake_settings, fake_client, as_user):
     as_user("owner")
     at = _open("app_pages/manage_dashboard.py")
     assert "revenue" in _all_text(at)
 
 
-def test_customer_signed_in_sees_account_page(fake_settings, as_user):
+def test_customer_signed_in_sees_account_page(fake_settings, fake_client, as_user):
     as_user("customer")
     at = _open("app_pages/account.py")
     assert not at.exception

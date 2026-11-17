@@ -6,6 +6,9 @@ from pathlib import Path
 
 import streamlit as st
 
+from services.community import community_total_cents
+from utils.formatting import money
+
 _THEME_CSS = Path(__file__).resolve().parent.parent / "assets" / "styles" / "theme.css"
 
 
@@ -15,10 +18,15 @@ def load_theme_css() -> None:
 
 
 def app_header() -> None:
-    """KEYGUARD LOCAL logo, tagline, and the Rancho Library banner."""
+    """KEYGUARD LOCAL logo, tagline, and the live Rancho Library banner."""
     with st.container(key="app_header"):
         with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
             st.markdown("### :material/lock: KEYGUARD :primary[LOCAL]")
             st.caption("Lock it. Carry it. Give back locally.")
-        st.caption(":material/volunteer_activism: Every drive supports the Rancho Public Library "
-                   "Digital Safety Fund (fictional, demo).")
+        total = community_total_cents()
+        if total:
+            st.caption(f":material/volunteer_activism: **{money(total)}** raised for the Rancho Public "
+                       "Library Digital Safety Fund (fictional, demo).")
+        else:
+            st.caption(":material/volunteer_activism: Every drive supports the Rancho Public Library "
+                       "Digital Safety Fund (fictional, demo).")

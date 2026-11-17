@@ -146,6 +146,8 @@ class FakeQuery:
             self.client.calls.append((self.table, *self._write))
         if self._single:
             return FakeResponse(self.rows[0] if self.rows else None)
+        if not isinstance(self.rows, list):  # an RPC that returns one value, for example a number
+            return FakeResponse(self.rows)
         return FakeResponse(self.rows, count=len(self.rows))
 
 

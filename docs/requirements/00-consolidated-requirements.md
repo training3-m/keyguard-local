@@ -144,7 +144,7 @@ These questions are for the class or instructor to decide. **If nobody decides, 
 | Q2 | Should the GitHub repository be public or private? What should it be called? | **Public**, named **`keyguard-local`**, with no secrets ever committed |
 | Q3 | Should staff see revenue on the dashboard? | **No.** Revenue and community totals are owner only. |
 | Q4 | What product images are used? | **Simple original placeholder images** per SKU, made for the demo. No photos of real brands' products. |
-| Q5 | Is the community banner total live or fixed? | **Live:** the sum of community gifts from orders that aren't cancelled |
+| Q5 | Is the community banner total live or fixed? | **Live:** the sum of community gifts from orders that aren't cancelled (built: `0009_community_total.sql`) |
 | Q6 | Is a light theme needed? | **No.** Dark only for v1, and a light theme is optional later. |
 | Q7 | Is Supabase email confirmation on? | **Off**, so no real emails are sent (NFR-AUTH-04) |
 | Q8 | Can customers cancel their own orders? | **No.** Only the owner can cancel (US-MGT-09). |

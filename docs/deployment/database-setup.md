@@ -22,6 +22,7 @@ Run the files **one at a time, in number order**. Each one depends on the ones b
 | 6 | `supabase/migrations/0006_storage_product_images.sql` | `product-images` storage bucket and its rules |
 | 7 | `supabase/migrations/0007_place_order.sql` | `place_order`: the all-or-nothing checkout (US-CHK-03) |
 | 8 | `supabase/migrations/0008_order_and_role_functions.sql` | `cancel_order`, `set_user_role`, `set_order_email_file` |
+| 8b | `supabase/migrations/0009_community_total.sql` | `community_total_cents`: the live total on the banner |
 
 ### Then the sample data and the test
 
