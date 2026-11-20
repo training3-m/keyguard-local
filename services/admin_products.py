@@ -10,11 +10,25 @@ from __future__ import annotations
 from typing import Any
 
 from models.product import Product
+from services import supabase_client
 
 
 def list_all_products(term: str = "", include_inactive: bool = True) -> list[Product]:
-    """All products, hidden ones included, filtered by name or SKU (US-MGT-02, U3-01)."""
-    raise NotImplementedError("US-MGT-02: list_all_products (U3-01)")
+    """All products, hidden ones included, filtered by name or SKU (US-MGT-02, U3-01).
+
+    Hidden products only come back for staff and the owner: the database rules (0005) give
+    customers active products only, so this can't leak hidden ones even if called by mistake.
+    Not cached: staff must always see the stock of right now.
+    """
+    result = supabase_client.get_client().table("products").select("*").order("sku").execute()
+    products = [Product.from_row(dict(row)) for row in (result.data or []) if isinstance(row, dict)]
+
+    needle = term.strip().lower()
+    return [
+        p for p in products
+        if (include_inactive or p.is_active)
+        and (not needle or needle in p.name.lower() or needle in p.sku.lower())
+    ]
 
 
 def create_product(data: dict[str, Any]) -> Product:
