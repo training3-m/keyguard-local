@@ -10,9 +10,10 @@ import logging
 import streamlit as st
 
 from components.product_card import product_card
+from components.product_detail import product_detail
 from components.security_hud import security_hud
-from components.states import coming_soon, error_state
-from services.products import search_products
+from components.states import error_state, not_found
+from services.products import get_product, search_products
 
 logger = logging.getLogger(__name__)
 
@@ -64,10 +65,24 @@ def _show_catalog() -> None:
                 product_card(product)
 
 
+def _show_detail(sku: str) -> None:
+    """The detail view for ?sku=... An unknown or hidden SKU shows "Product not found" (US-PDP-01 AC2)."""
+    try:
+        product = get_product(sku)
+    except Exception:  # never show raw database errors to shoppers (NFR-SEC-08)
+        logger.exception("shop: could not load product")
+        if error_state("We couldn't load this drive right now.", key="detail_retry"):
+            st.rerun()
+        return
+    if product is None:
+        not_found("Product")
+        return
+    product_detail(product)
+
+
 sku = st.query_params.get("sku")
 
 if sku:
-    coming_soon("US-PDP-01 · U1-03", f"details, Security HUD and Add to cart for {sku}")
-    st.page_link("app_pages/shop.py", label="Back to shop", icon=":material/arrow_back:")
+    _show_detail(sku)
 else:
     _show_catalog()

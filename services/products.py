@@ -74,8 +74,16 @@ def search_products(
 
 
 def get_product(sku: str) -> Product | None:
-    """One ACTIVE product by SKU, or None if it doesn't exist or is hidden (US-PDP-01 AC2, U1-03)."""
-    raise NotImplementedError("US-PDP-01: get_product (U1-03)")
+    """One ACTIVE product by SKU, or None if it doesn't exist or is hidden (US-PDP-01 AC2, U1-03).
+
+    Uses the same cached active list as the search, so a hidden product can never be opened by
+    typing its SKU into the address bar. SKUs are stored in capitals; "kg-pro-64" also works.
+    """
+    wanted = sku.strip().upper()
+    for row in _active_product_rows():
+        if row.get("sku") == wanted:
+            return Product.from_row(row)
+    return None
 
 
 def related(sku: str, limit: int = 3) -> list[Product]:

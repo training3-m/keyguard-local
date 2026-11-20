@@ -26,7 +26,7 @@ Pages never call Supabase directly. Shared UI lives in `components/`.
 | `get_client() -> Client` | `services/supabase_client.py` | NFR-SES-02 | Lead | ✅ |
 | `community_total_cents() -> int \| None` | `services/community.py` | 02 §4.1, Q5 | Lead | ✅ |
 | `search_products(term, category, capacity_gb, price_range, in_stock_only, sort) -> list[Product]` | `services/products.py` | US-SRCH-01/02/03 · U1-01/02/06 | User 1 | ✅ term (U1-01) · 🧩 filters, sort |
-| `get_product(sku) -> Product \| None` | `services/products.py` | US-PDP-01 · U1-03 | User 1 | 🧩 |
+| `get_product(sku) -> Product \| None` | `services/products.py` | US-PDP-01 · U1-03 | User 1 | ✅ |
 | `related(sku, limit=3) -> list[Product]` | `services/products.py` | US-PDP-02 · U1-08 | User 1 | 🧩 |
 | `list_users(term="") -> list[UserProfile]` | `services/users.py` | US-MGT-10 · U1-05 | User 1 | 🧩 |
 | `set_user_role(user_id, role) -> None` | `services/users.py` | US-MGT-10 · U1-05 | User 1 | 🧩 |
