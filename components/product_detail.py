@@ -13,8 +13,10 @@ import streamlit as st
 from components.badges import community_chip, stock_badge
 from components.security_hud import lock_indicator, security_hud
 from models.product import Product
+from utils import cart
 from utils.formatting import money
 
+_TOAST_KEY = "_cart_toast"  # the message to show after an Add to cart click
 _PLACEHOLDER = Path(__file__).resolve().parent.parent / "assets" / "images" / "product-placeholder.svg"
 
 # Friendly names for the keys in products.specs (seed data, 01_products.sql).
@@ -46,9 +48,45 @@ def _summary(product: Product) -> None:
     with st.container(horizontal=True, gap="small"):
         stock_badge(product.stock_qty, is_active=product.is_active)
         community_chip(product.community_gift_cents)
-    # U1-04 replaces this note with the quantity picker and the Add to cart button.
-    st.caption(":material/construction: Add to cart is coming soon (US-CART-01 · U1-04).")
+    _add_to_cart(product)
     st.page_link("app_pages/shop.py", label="Back to shop", icon=":material/arrow_back:")
+
+
+def _on_add(product: Product, qty_key: str) -> None:
+    """Runs when Add to cart is clicked, BEFORE the page redraws, so the "Cart (N)" count in the
+    menu already includes the new items on this same click (US-CART-01 AC1)."""
+    qty = int(st.session_state[qty_key])
+    before = cart.get_cart().get(product.sku, 0)
+    after = cart.add(product.sku, qty, max_qty=product.max_order_qty)
+    if after < before + qty:  # AC2: tell the shopper when the limit stopped the add
+        message = (f"Limit reached: you can order up to {product.max_order_qty} of {product.name}. "
+                   f"Your cart has {after}.")
+        st.session_state[_TOAST_KEY] = (message, ":material/info:")
+    else:
+        st.session_state[_TOAST_KEY] = (f"Added {qty} × {product.name} to cart",
+                                        ":material/add_shopping_cart:")
+
+
+def _add_to_cart(product: Product) -> None:
+    """Quantity picker and Add to cart (US-CART-01). Guests can add too (AC4)."""
+    if not product.in_stock:  # AC3
+        st.button("Out of stock", disabled=True, icon=":material/remove_shopping_cart:",
+                  key=f"add_{product.sku}")
+        return
+
+    qty_key = f"qty_{product.sku}"
+    with st.container(horizontal=True, vertical_alignment="bottom"):
+        # AC1: 1 up to 10, or fewer when stock is lower.
+        st.selectbox("Qty", options=list(range(1, product.max_order_qty + 1)), key=qty_key, width=90)
+        st.button("Add to cart", type="primary", icon=":material/add_shopping_cart:",
+                  key=f"add_{product.sku}", on_click=_on_add, args=(product, qty_key))
+
+    in_cart = cart.get_cart().get(product.sku, 0)
+    if in_cart:
+        st.caption(f"In your cart: {in_cart}")
+    toast = st.session_state.pop(_TOAST_KEY, None)
+    if toast:
+        st.toast(toast[0], icon=toast[1])
 
 
 def spec_rows(product: Product) -> list[dict[str, str]]:
