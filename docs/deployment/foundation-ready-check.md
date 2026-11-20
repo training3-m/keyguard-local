@@ -13,7 +13,7 @@ Status as of 2026-11-17: ✅ done · ⬜ to do (who).
 | 5 | `ruff check .` and `python -m pytest tests/unit -q` pass; CI is green on `main` | ✅ / ⬜ Lead | Pass locally (44 tests). CI is green on every pull request; confirm on `main` after merging #5–#7. |
 | 6 | No `.env`, key or password in the repo: run `git ls-files` and look | ✅ | Checked before every push; the only "keys" are fakes in tests |
 | 7 | `docs/architecture/service-contracts.md` lists a function for every story | ✅ | Written in Prompt E with a scripted check of all 31 stories |
-| 8 | The **cloud demo** Supabase project has the migrations and seed applied, and email confirmation is off | ⬜ Lead | Follow [streamlit-cloud.md](streamlit-cloud.md) step 1 |
+| 8 | The **cloud demo** Supabase project has the migrations and seed applied, and email confirmation is off | ✅ | 2026-11-19: separate demo project created; migrations 0001–0009 + `01_products` (11 products) + `02_demo_roles` (owner/staff/customer) applied; email confirmation off. No sample orders, per NFR-ENV-04. The accounts were made before the tables, so `02_demo_roles.sql` now adds missing profiles itself. |
 | 9 | **Dry run:** the Lead builds the smallest story with Prompt 3 and times it; over 30 minutes means simplify the story list | ⬜ Lead | Team story work, not done yet on purpose |
 
 ## Before tagging
