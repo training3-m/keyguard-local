@@ -8,6 +8,7 @@ Keep every name and parameter; fill in the bodies in the stories listed.
 from __future__ import annotations
 
 import logging
+from pathlib import PurePath
 from typing import Any
 from uuid import UUID
 
@@ -76,8 +77,21 @@ def place_order(cart: dict[str, int], shipping: dict[str, str], idempotency_key:
 
 
 def get_order(order_number: str) -> Order | None:
-    """One order with its lines, if the signed-in user may see it (confirmation page, US-CHK-05, U2-04)."""
-    raise NotImplementedError("US-CHK-05: get_order (U2-04)")
+    """One order with its lines, if the signed-in user may see it (confirmation page, US-CHK-05, U2-04).
+
+    No "is it mine?" check is needed here: the database rules (0005) only return a customer's OWN
+    orders, so someone else's order number simply comes back as None.
+    """
+    result = (
+        supabase_client.get_client()
+        .table("orders")
+        .select("*, order_items(*)")  # the order and its lines in one request
+        .eq("order_number", order_number.strip().upper())
+        .maybe_single()
+        .execute()
+    )
+    data = result.data if result is not None else None  # no row: supabase-py may return None
+    return Order.from_row(dict(data)) if isinstance(data, dict) else None
 
 
 def list_my_orders() -> list[Order]:
@@ -86,5 +100,12 @@ def list_my_orders() -> list[Order]:
 
 
 def record_email_file(order_number: str, path: str) -> None:
-    """Saves where the .eml confirmation was written, via public.set_order_email_file (US-CHK-04, U2-05)."""
-    raise NotImplementedError("US-CHK-04: record_email_file (U2-05)")
+    """Saves where the .eml confirmation was written, via public.set_order_email_file (US-CHK-04, U2-05).
+
+    Customers can't update orders directly (0005), so this goes through a database function that
+    only accepts a safe "outbox/<name>.eml" path (0008).
+    """
+    supabase_client.get_client().rpc("set_order_email_file", {
+        "p_order_number": order_number,
+        "p_path": f"outbox/{PurePath(path).name}",
+    }).execute()

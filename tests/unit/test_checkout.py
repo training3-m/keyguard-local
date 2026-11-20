@@ -15,6 +15,14 @@ PLACED = {"order_number": "KG-20261119-0001", "order_id": 9, "subtotal_cents": 7
           "tax_cents": 632, "total_cents": 8532, "community_gift_cents": 300, "already_placed": False}
 
 
+@pytest.fixture(autouse=True)
+def _temp_outbox(tmp_path, monkeypatch):
+    """Emails written by these tests go to a throwaway folder, never the real outbox/."""
+    import services.email_outbox as email_outbox
+
+    monkeypatch.setattr(email_outbox, "OUTBOX_DIR", tmp_path)
+
+
 def _db_error(code: str, message: str) -> APIError:
     return APIError({"code": code, "message": message, "details": None, "hint": None})
 
@@ -109,6 +117,8 @@ def test_form_shows_email_readonly_and_prefilled_name(fake_settings, fake_client
 
 def test_placing_an_order_clears_the_cart_and_shows_the_number(fake_settings, fake_client, as_user):
     fake_client.rpc_results["place_order"] = PLACED
+    new_order = {**fake_client.tables["orders"][0], "id": 9, "order_number": PLACED["order_number"]}
+    fake_client.tables["orders"].append(new_order)  # what the database now holds
     as_user("customer")
     at = _submit(_fill(_open_checkout({"KG-PRO-64": 1})))
     assert not at.exception
