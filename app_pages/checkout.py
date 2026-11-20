@@ -10,11 +10,13 @@ from uuid import UUID, uuid4
 import streamlit as st
 
 from components.cart_summary import cart_summary
-from components.states import coming_soon, empty_state, error_state
+from components.order_detail import order_detail
+from components.states import empty_state, error_state, not_found
 from models.cart import CartLine
 from models.user import UserProfile
 from services.cart_lines import load_cart_lines
-from services.orders import OrderError, place_order
+from services.email_outbox import confirmation_bytes, safe_file_name, write_confirmation
+from services.orders import OrderError, get_order, place_order, record_email_file
 from utils import cart
 from utils.formatting import money
 from utils.guards import require_signed_in
@@ -108,11 +110,70 @@ def _place_order_now() -> None:
         st.rerun()
 
     # Success: empty the cart, start a fresh key for the next checkout and show the confirmation.
+    order_number = str(result["order_number"])
     cart.clear()
     st.session_state.pop(_KEY, None)
     st.session_state.pop("checkout_demo", None)
-    st.query_params["order"] = str(result["order_number"])
+    _save_confirmation_email(order_number)
+    st.query_params["order"] = order_number
     st.rerun()
+
+
+def _save_confirmation_email(order_number: str) -> None:
+    """Writes the .eml into outbox/ and records its path (US-CHK-04).
+
+    The order is already committed, so a problem here must NOT undo or hide it (AC3): the order
+    simply has no email_file, and the confirmation page says "email not generated".
+    """
+    try:
+        order = get_order(order_number)
+        if order is None:
+            raise LookupError("order not readable right after placing it")
+        path = write_confirmation(order)
+        record_email_file(order_number, str(path))
+    except Exception:
+        logger.exception("confirmation email not generated for %s", order_number)
+
+
+def _first_name(full_name: str) -> str:
+    return full_name.split()[0] if full_name.strip() else "there"
+
+
+def _show_confirmation(order_number: str) -> None:
+    """The order confirmation (US-CHK-05): number, items, totals, gift and the email download."""
+    try:
+        order = get_order(order_number)
+    except Exception:  # never show raw database errors (NFR-SEC-08)
+        logger.exception("confirmation: could not load order")
+        if error_state("We couldn't load your order right now.", key="confirmation_retry"):
+            st.rerun()
+        return
+    if order is None:  # unknown, or someone else's: the database rules hide it either way
+        not_found("Order")
+        return
+
+    st.success(f"Thank you, {_first_name(order.customer_name)}! Your order {order.order_number} is confirmed.",
+               icon=":material/check_circle:")
+    if order.email_file:
+        st.caption(f"A confirmation email was saved for {order.customer_email} (demo outbox, never sent).")
+    else:
+        st.warning("Email not generated for this order. You can still download a copy below.",
+                   icon=":material/mail:")
+
+    order_detail(order)
+    st.markdown(f":material/volunteer_activism: You gave **{money(order.community_gift_cents)}** "
+                "to the Rancho Public Library Digital Safety Fund.")
+
+    with st.container(horizontal=True):
+        st.download_button(
+            "Download confirmation email",
+            data=confirmation_bytes(order),
+            file_name=safe_file_name(order),
+            mime="message/rfc822",
+            icon=":material/download:",
+            key="download_email",
+        )
+        st.page_link("app_pages/shop.py", label="Back to shop", icon=":material/storefront:")
 
 
 def _show_checkout(user: UserProfile) -> None:
@@ -149,10 +210,8 @@ def _show_checkout(user: UserProfile) -> None:
 
 user = require_signed_in("Sign in to check out. Your cart is saved.", return_to="app_pages/checkout.py")
 
-order_number = st.query_params.get("order")
-if order_number:
-    st.success(f"Thank you! Your order {order_number} is placed.", icon=":material/check_circle:")
-    coming_soon("US-CHK-05 · U2-04", "the full confirmation with your items and the email download")
-    st.page_link("app_pages/shop.py", label="Back to shop", icon=":material/storefront:")
+order_param = st.query_params.get("order")
+if order_param:
+    _show_confirmation(order_param)
 else:
     _show_checkout(user)
