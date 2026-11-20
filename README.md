@@ -87,6 +87,7 @@ Open **http://localhost:8501**. Stop it with **Ctrl + C** in the terminal.
 | "…is a secret / service-role key" | You pasted the wrong key. Use the anon / publishable one. |
 | `python` opens the Microsoft Store | Restart VS Code after installing Python, or use `.\.venv\Scripts\python.exe`. |
 | `ModuleNotFoundError` | Run step 2's `pip install -r requirements.txt` again, inside this folder. |
+| `pip install` says "The filename or extension is too long" (then `No module named 'streamlit.proto'`) | Windows path limit: the folder is too deep. Delete the folder, clone into a short path such as `C:\Projects\keyguard-local`, and start again from step 1. |
 | Sign-in always fails | Check the account exists in Supabase → Authentication → Users, and that **Confirm email** is off. |
 
 ## How the code is organized

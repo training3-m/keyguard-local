@@ -6,7 +6,7 @@ Status as of 2026-11-17: ✅ done · ⬜ to do (who).
 
 | # | Ready-check item | Status | How it was checked / what's left |
 |---|---|---|---|
-| 1 | A teammate does a **fresh clone** and gets the app running by following only the README | ⬜ Teammate | README has exact Windows steps (Prompt F). Ask one teammate to try it, without help, and note anything unclear. |
+| 1 | A teammate does a **fresh clone** and gets the app running by following only the README | ✅ | 2026-11-19, the Lead works solo, so this was done from a fresh clone into an empty folder, following only the README: venv + install OK (Streamlit 1.67.0), `ruff` all checks passed, 44 tests passed, app started and showed the friendly "Missing SUPABASE_URL…" message without keys. Found one gap: a very deep folder breaks `pip install` (Windows path limit); added to README Troubleshooting. |
 | 2 | Every page in the site map opens and shows "Coming soon" without an error | ✅ | Agent API walk (guest) and AppTest page tests; checked by hand as each role |
 | 3 | The demo customer, staff and owner can sign in and see the right menu; the wrong role sees "access denied" | ✅ | Checked by hand in the browser for all 3 accounts; guards tested in `tests/unit/test_app_pages.py` |
 | 4 | The all-or-nothing function passes its SQL test on the dev project | ✅ | `supabase/tests/place_order_test.sql` → ALL PLACE_ORDER TESTS PASSED |
