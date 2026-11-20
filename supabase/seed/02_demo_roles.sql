@@ -15,6 +15,14 @@ begin
     raise exception 'Create these accounts first (Authentication > Users > Add user): %', v_missing;
   end if;
 
+  -- Accounts created BEFORE the migrations ran have no profile (the sign-up trigger didn't
+  -- exist yet), and the update below would then silently change nothing. Add them first.
+  insert into public.profiles (id, role)
+  select u.id, 'customer'
+  from auth.users u
+  where u.email in ('owner@example.com', 'staff@example.com', 'customer@example.com')
+  on conflict (id) do nothing;
+
   update public.profiles p
   set role = d.role, full_name = d.full_name
   from (values
