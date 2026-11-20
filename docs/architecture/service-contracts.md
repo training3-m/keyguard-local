@@ -30,7 +30,7 @@ Pages never call Supabase directly. Shared UI lives in `components/`.
 | `related(sku, limit=3) -> list[Product]` | `services/products.py` | US-PDP-02 · U1-08 | User 1 | 🧩 |
 | `list_users(term="") -> list[UserProfile]` | `services/users.py` | US-MGT-10 · U1-05 | User 1 | 🧩 |
 | `set_user_role(user_id, role) -> None` | `services/users.py` | US-MGT-10 · U1-05 | User 1 | 🧩 |
-| `load_cart_lines(cart) -> list[CartLine]` | `services/cart_lines.py` | US-CART-02 · U2-01 | User 2 | 🧩 |
+| `load_cart_lines(cart) -> list[CartLine]` | `services/cart_lines.py` | US-CART-02 · U2-01 | User 2 | ✅ |
 | `place_order(cart, shipping, idempotency_key) -> dict` | `services/orders.py` | US-CHK-02/03 · U2-03 | User 2 | 🧩 |
 | `get_order(order_number) -> Order \| None` | `services/orders.py` | US-CHK-05 · U2-04 | User 2 | 🧩 |
 | `record_email_file(order_number, path) -> None` | `services/orders.py` | US-CHK-04 · U2-05 | User 2 | 🧩 |
