@@ -7,12 +7,45 @@ Keep every name and parameter; fill in the bodies in the stories listed.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
+
+import streamlit as st
 
 from models.product import Product
+from services import supabase_client
 
 SortOption = Literal["featured", "price_asc", "price_desc", "capacity", "newest"]
 CATEGORIES = ("Essentials", "Pro", "Community", "Bulk", "Accessories")
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def _active_product_rows() -> list[dict[str, Any]]:
+    """Every ACTIVE product row, best-featured first. Cached for 30 seconds (NFR-PERF-01).
+
+    Sharing this cache between visitors is safe because it only holds active products, which
+    everyone may see. The explicit is_active filter matters: staff and owners are ALSO allowed
+    to read hidden products (0005), and those must never end up in the shared shop list.
+    Call _active_product_rows.clear() after a product edit or an order so stock is fresh.
+    """
+    result = (
+        supabase_client.get_client()
+        .table("products")
+        .select("*")
+        .eq("is_active", True)
+        .order("featured_rank")
+        .execute()
+    )
+    # Each row is a dict; anything else would be a broken response, so it is skipped.
+    return [row for row in (result.data or []) if isinstance(row, dict)]
+
+
+def _matches(product: Product, term: str) -> bool:
+    """True if the search term is inside the name, SKU, category or description (any case)."""
+    needle = term.strip().lower()
+    if not needle:
+        return True
+    searchable = (product.name, product.sku, product.category, product.description or "")
+    return any(needle in text.lower() for text in searchable)
 
 
 def search_products(
@@ -26,8 +59,18 @@ def search_products(
     """Active products matching the search and filters (case-insensitive name/SKU/category/description).
 
     Stories: US-SRCH-01 (term, U1-01), US-SRCH-02 (filters, U1-02), US-SRCH-03 (sort, U1-06).
+    Database errors are not caught here: the page shows a friendly message instead.
     """
-    raise NotImplementedError("US-SRCH-01: search_products (U1-01)")
+    # Filters and sorting come in later stories. Failing loudly beats silently ignoring them.
+    if category or capacity_gb or price_range or in_stock_only:
+        raise NotImplementedError("US-SRCH-02: filters (U1-02)")
+    if sort != "featured":
+        raise NotImplementedError("US-SRCH-03: sort (U1-06)")
+
+    # The catalog is small (under 100 drives), so matching in Python is fast and simple. It also
+    # means the shopper's text is never pasted into a database query.
+    products = [Product.from_row(row) for row in _active_product_rows()]
+    return [p for p in products if _matches(p, term)]
 
 
 def get_product(sku: str) -> Product | None:
