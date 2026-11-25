@@ -40,7 +40,7 @@ Pages never call Supabase directly. Shared UI lives in `components/`.
 | `low_stock(threshold=5) -> list[Product]` | `services/dashboard.py` | US-MGT-08 · U2-06 | User 2 | 🧩 |
 | `recent_orders(limit=10) -> list[Order]` | `services/dashboard.py` | US-MGT-08 · U2-06 | User 2 | 🧩 |
 | `list_all_products(term="", include_inactive=True) -> list[Product]` | `services/admin_products.py` | US-MGT-02 · U3-01 | User 3 | ✅ |
-| `set_active(sku, active) -> None` | `services/admin_products.py` | US-MGT-05 · U3-02 | User 3 | 🧩 |
+| `set_active(sku, active) -> None` | `services/admin_products.py` | US-MGT-05 · U3-02 | User 3 | ✅ raises `ProductError` |
 | `create_product(data) -> Product` | `services/admin_products.py` | US-MGT-03 · U3-03 | User 3 | 🧩 |
 | `update_products(changes) -> int` | `services/admin_products.py` | US-MGT-04 · U3-04 | User 3 | 🧩 |
 | `delete_product(sku) -> None` | `services/admin_products.py` | US-MGT-06 · U3-06 | User 3 | 🧩 |

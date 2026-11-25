@@ -7,10 +7,26 @@ Keep every name and parameter; fill in the bodies in the stories listed.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
+from postgrest.exceptions import APIError
+
 from models.product import Product
+from services import products as shop_products
 from services import supabase_client
+
+logger = logging.getLogger(__name__)
+
+GENERIC_PRODUCT_ERROR = "We couldn't save that change right now. Please try again in a minute."
+
+
+class ProductError(Exception):
+    """A change to the catalog was refused. `message` is safe to show on the page."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+        self.message = message
 
 
 def list_all_products(term: str = "", include_inactive: bool = True) -> list[Product]:
@@ -42,8 +58,29 @@ def update_products(changes: list[dict[str, Any]]) -> int:
 
 
 def set_active(sku: str, active: bool) -> None:
-    """Shows or hides a product in the shop (US-MGT-05, U3-02)."""
-    raise NotImplementedError("US-MGT-05: set_active (U3-02)")
+    """Shows or hides a product in the shop (US-MGT-05, U3-02).
+
+    Hiding never deletes anything: old orders still point at the product, so history is kept.
+    Raises ProductError with a friendly message if the database refuses or the SKU is unknown.
+    """
+    wanted = sku.strip().upper()
+    try:
+        result = (
+            supabase_client.get_client().table("products")
+            .update({"is_active": active}).eq("sku", wanted).execute()
+        )
+    except APIError:  # never show raw database errors (NFR-SEC-08)
+        logger.exception("set_active failed for %s", wanted)
+        raise ProductError(GENERIC_PRODUCT_ERROR) from None
+
+    # The security rules (0005) quietly skip rows you may not change, so 0 rows back means
+    # "not found or not allowed". Tell the user instead of pretending it worked.
+    if not result.data:
+        raise ProductError(f"Product {wanted} was not changed. It may not exist, "
+                           "or your account can't change it.")
+
+    # The shop keeps its product list for 30 seconds; clear it so the change shows at once.
+    shop_products._active_product_rows.clear()
 
 
 def delete_product(sku: str) -> None:
