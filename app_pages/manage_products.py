@@ -12,7 +12,7 @@ import streamlit as st
 
 from components.states import error_state
 from models.product import LOW_STOCK_THRESHOLD, Product
-from services.admin_products import list_all_products
+from services.admin_products import ProductError, list_all_products, set_active
 from utils.guards import require_role
 
 logger = logging.getLogger(__name__)
@@ -35,6 +35,68 @@ def _table_rows(products: list[Product]) -> list[dict]:
         }
         for p in products
     ]
+
+
+def _change_active(sku: str, name: str, active: bool) -> None:
+    """Button callback: saves the change, then leaves a message for the next run."""
+    st.session_state.pop("manage_confirm_hide", None)
+    try:
+        set_active(sku, active)
+    except ProductError as error:
+        st.session_state["manage_active_error"] = error.message
+        return
+    st.session_state["manage_active_toast"] = (
+        f"{name} is back in the shop." if active else f"{name} is now hidden from the shop."
+    )
+
+
+def _ask_to_hide(sku: str) -> None:
+    st.session_state["manage_confirm_hide"] = sku
+
+
+def _cancel_hide() -> None:
+    st.session_state.pop("manage_confirm_hide", None)
+
+
+def _hide_or_show(products: list[Product]) -> None:
+    """US-MGT-05: hide a drive from shoppers (or bring it back) without deleting its history."""
+    st.subheader("Hide or show a product")
+    by_sku = {p.sku: p for p in products}
+    sku = st.selectbox(
+        "Product", list(by_sku), key="manage_active_sku",
+        format_func=lambda s: f"{s} · {by_sku[s].name} · {'In shop' if by_sku[s].is_active else 'Hidden'}",
+    )
+    if sku is None:
+        return
+    product = by_sku[sku]
+
+    if not product.is_active:
+        st.caption("Hidden: shoppers can't see or buy it. Past orders still show it.")
+        st.button("Show in shop", icon=":material/visibility:", key="manage_show",
+                  on_click=_change_active, args=(product.sku, product.name, True))
+        return
+
+    if st.session_state.get("manage_confirm_hide") != product.sku:
+        st.button("Hide from shop", icon=":material/visibility_off:", key="manage_hide",
+                  on_click=_ask_to_hide, args=(product.sku,))
+        return
+
+    # Ask first: hiding takes the drive out of the shop straight away.
+    st.warning(f"Hide **{product.name}** ({product.sku})? Shoppers won't see it and its page will "
+               "say \"Product not found\". Nothing is deleted: past orders keep it, and you can "
+               "show it again any time.", icon=":material/warning:")
+    with st.container(horizontal=True):
+        st.button("Yes, hide it", type="primary", key="manage_hide_yes",
+                  on_click=_change_active, args=(product.sku, product.name, False))
+        st.button("Cancel", key="manage_hide_cancel", on_click=_cancel_hide)
+
+
+def _show_messages() -> None:
+    """Messages left by the button callbacks (they run before the page redraws)."""
+    if toast := st.session_state.pop("manage_active_toast", None):
+        st.toast(toast, icon=":material/check_circle:")
+    if error := st.session_state.pop("manage_active_error", None):
+        st.error(error, icon=":material/error:")
 
 
 def _show_products() -> None:
@@ -70,6 +132,8 @@ def _show_products() -> None:
             "Active": st.column_config.CheckboxColumn("In shop", help="Unticked = hidden from shoppers"),
         },
     )
+    _hide_or_show(products)
 
 
+_show_messages()
 _show_products()
